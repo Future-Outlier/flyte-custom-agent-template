@@ -1,31 +1,35 @@
-# flyte-custom-agent
+# flyte-custom-agent-template
 How to write your own custom agent and bring it to a Dockerfile.
-1. flytekit will load plugin here
-2. agent registration will be caleed by loading the plugin
 
+## Concepts
+1. flytekit will load plugin [here](https://github.com/flyteorg/flytekit/blob/ff2d0da686c82266db4dbf764a009896cf062349/flytekit/__init__.py#L322-L323), 
+so you must put your plugin to `entry_points`.
+2. agent registration will be called by loading the plugin, for example, 
+bigquery's agent registeration will be called [here](https://github.com/Future-Outlier/flyte-custom-agent/blob/main/flytekit-bigquery/flytekitplugins/bigquery/agent.py#L97)
 
-docker run -it to test if your agent is installed or not
+## Build your own custom agent
+1. follow the folder structure in this repo, you can build your own custom agent.
+2. build your own custom agent
 ```bash
-docker run -it cr.flyte.org/flyteorg/flyteagent:1.13.11
+docker buildx build --platform linux/amd64 -t localhost:30000/flyteagent:custom-bigquery -f Dockerfile .
 ```
-the log should be like this
+3. test the image by running it
+```bash
+docker run -it localhost:30000/flyteagent:custom-bigquery
 ```
-(dev) future@outlier ~ % docker run -it cr.flyte.org/flyteorg/flyteagent:1.13.11
+
+4. check the log (sensor is created by flytekit, bigquery is created by the custom agent)
+```
+(dev) future@outlier ~ % docker run -it localhost:30000/flyteagent:custom-bigquery
+
+WARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested
 🚀 Starting the agent service...
 Starting up the server to expose the prometheus metrics...
-                             Agent Metadata
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
-┃ Agent Name                  ┃ Support Task Types            ┃ Is Sync ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
-│ Sensor                      │ sensor (v0)                   │ False   │
-│ Databricks Agent            │ spark (v0) databricks (v0)    │ False   │
-│ MMCloud Agent               │ mmcloud_task (v0)             │ False   │
-│ Bigquery Agent              │ bigquery_query_job_task (v0)  │ False   │
-│ SageMaker Endpoint Agent    │ sagemaker-endpoint (v0)       │ False   │
-│ Boto Agent                  │ boto (v0)                     │ True    │
-│ Snowflake Agent             │ snowflake (v0)                │ False   │
-│ OpenAI Batch Endpoint Agent │ openai-batch (v0)             │ False   │
-│ ChatGPT Agent               │ chatgpt (v0)                  │ True    │
-│ Airflow Agent               │ airflow (v0)                  │ False   │
-└─────────────────────────────┴───────────────────────────────┴─────────┘
+                       Agent Metadata                       
+┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+┃ Agent Name     ┃ Support Task Types            ┃ Is Sync ┃
+┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+│ Sensor         │ sensor (v0)                   │ False   │
+│ Bigquery Agent │ bigquery_query_job_task (v0)  │ False   │
+└────────────────┴───────────────────────────────┴─────────┘
 ```
