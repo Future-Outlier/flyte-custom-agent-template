@@ -1,25 +1,28 @@
 # flyte-custom-agent-template
-How to write your own custom agent and bring it to a Dockerfile.
+How to write your custom agent and build it with a Dockerfile.
 
 ## Concepts
 1. flytekit will load plugin [here](https://github.com/flyteorg/flytekit/blob/ff2d0da686c82266db4dbf764a009896cf062349/flytekit/__init__.py#L322-L323), 
-so you must put your plugin to `entry_points` in [setup.py](https://github.com/Future-Outlier/flyte-custom-agent-template/blob/main/flytekit-bigquery/setup.py).
-2. agent registration will be called by loading the plugin, for example, 
-bigquery's agent registeration will be called [here](https://github.com/Future-Outlier/flyte-custom-agent/blob/main/flytekit-bigquery/flytekitplugins/bigquery/agent.py#L97)
+so you must add your plugin to `entry_points` in [setup.py](https://github.com/Future-Outlier/flyte-custom-agent-template/blob/main/flytekit-bigquery/setup.py#L39).
+2. Agent registration is triggered by loading the plugin. For example,
+BigQuery's agent registration is triggered [here](https://github.com/Future-Outlier/flyte-custom-agent/blob/main/flytekit-bigquery/flytekitplugins/bigquery/agent.py#L97)
 
-## Build your own custom agent
-1. follow the folder structure in this repo, you can build your own custom agent.
-2. build your own custom agent
+## Build your custom agent
+1. Following the folder structure in this repo, you can build your custom agent.
+2. Build your own custom agent ([learn more](https://docs.flyte.org/en/latest/user_guide/flyte_agents/developing_agents.html))
+
+> In the following command, `localhost:3000` is the Docker registry that ships with the Flyte demo cluster. Use it or replace it with a registry where you have push permissions.
+
 ```bash
 docker buildx build --platform linux/amd64 -t localhost:30000/flyteagent:custom-bigquery -f Dockerfile .
 ```
 
-3. test the image by running it
+3. Test the image:
 ```bash
 docker run -it localhost:30000/flyteagent:custom-bigquery
 ```
 
-4. check the log (sensor is created by flytekit, bigquery is created by the custom agent)
+4. Check the logs (sensor is created by flytekit, bigquery is created by the custom agent)
 ```
 (dev) future@outlier ~ % docker run -it localhost:30000/flyteagent:custom-bigquery
     
