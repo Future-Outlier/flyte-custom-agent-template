@@ -13,6 +13,7 @@ bigquery's agent registeration will be called [here](https://github.com/Future-O
 ```bash
 docker buildx build --platform linux/amd64 -t localhost:30000/flyteagent:custom-bigquery -f Dockerfile .
 ```
+
 3. test the image by running it
 ```bash
 docker run -it localhost:30000/flyteagent:custom-bigquery
