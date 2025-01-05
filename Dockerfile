@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 # Install Python dependencies
 RUN pip install --no-cache-dir \
     prometheus-client \
-    grpcio-health-checking
+    grpcio-health-checking==1.67.1
 
 # Install Flytekit from GitHub
 RUN pip install --no-cache-dir git+https://github.com/flyteorg/flytekit.git@master
@@ -20,6 +20,9 @@ RUN pip install --no-cache-dir git+https://github.com/flyteorg/flytekit.git@mast
 # Copy and install the bigquery plugin
 COPY flytekit-bigquery /flytekit-bigquery
 RUN pip install --no-cache-dir /flytekit-bigquery
+
+COPY flytekit-openai /flytekit-openai
+RUN pip install --no-cache-dir /flytekit-openai
 
 # Cleanup
 RUN apt-get purge -y build-essential git \
